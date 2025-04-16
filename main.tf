@@ -37,7 +37,6 @@ module "eks" {
 
   vpc_id                   = var.vpc_id
   subnet_ids               = var.subnet_ids
-  #control_plane_subnet_ids = ["subnet-id1", "subnet-id2", "subnet-id3"]
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
