@@ -14,49 +14,35 @@ provider "aws" {
   region = var.region
 }
 
-module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
-
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-
-  bootstrap_self_managed_addons = false
-  cluster_addons = {
-    coredns                = {}
-    eks-pod-identity-agent = {}
-    kube-proxy             = {}
-    vpc-cni                = {}
+resource "aws_vpc" "test-vpc" {
+  cidr_block       = "10.0.0.0/24"
+  instance_tenancy = "default"
+  
+  tags = {
+    Name = "test-vpc"
+    vpcname= "test-vpc"
   }
+}
 
-  # Optional
-  cluster_endpoint_public_access = true
-
-  # Optional: Adds the current caller identity as an administrator via cluster access entry
-  enable_cluster_creator_admin_permissions = true
-
-  vpc_id                   = var.vpc_id
-  subnet_ids               = var.subnet_ids
-
-  # EKS Managed Node Group(s)
-  eks_managed_node_group_defaults = {
-    instance_types = var.instance_types
-  }
-
-  eks_managed_node_groups = {
-    workernodegroup1 = {
-      # Starting on 1.30, AL2023 is the default AMI type for EKS-managed node groups
-      ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = var.instance_types
-
-      min_size     = 2
-      max_size     = 4
-      desired_size = 3
-    }
-  }
+resource "aws_subnet" "public" {
+  count                   = length(var.public_subnet_cidrs)
+  vpc_id                  = aws_vpc.test-vpc.id
+  cidr_block              = var.public_subnet_cidrs[count.index]
+  availability_zone       = element(var.azs, count.index)
+  map_public_ip_on_launch = true
 
   tags = {
-    Environment = "dev"
-    Terraform   = "true"
+    Name = "public-subnet-${count.index + 1}"
+  }
+}
+
+resource "aws_subnet" "private" {
+  count             = length(var.private_subnet_cidrs)
+  vpc_id            = aws_vpc.test-vpc.id
+  cidr_block        = var.private_subnet_cidrs[count.index]
+  availability_zone = element(var.azs, count.index)
+
+  tags = {
+    Name = "private-subnet-${count.index + 1}"
   }
 }
