@@ -37,7 +37,7 @@ module "eks" {
 
   vpc_id                   = var.vpc_id
   subnet_ids               = var.subnet_ids
-  #control_plane_subnet_ids = ["subnet-xyzde987", "subnet-slkjf456", "subnet-qeiru789"]
+  #control_plane_subnet_ids = ["subnet-id1", "subnet-id2", "subnet-id3"]
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
@@ -45,8 +45,8 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    example = {
-      # Starting on 1.30, AL2023 is the default AMI type for EKS managed node groups
+    workernodegroup1 = {
+      # Starting on 1.30, AL2023 is the default AMI type for EKS-managed node groups
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = var.instance_types
 
