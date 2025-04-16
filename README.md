@@ -12,6 +12,5 @@ This project uses the [terraform-aws-modules/eks](https://github.com/terraform-a
 .
 ├── main.tf          # Main Terraform configuration
 ├── variables.tf     # Input variables
-├── outputs.tf       # (Optional) Output values
 └── README.md        # Project documentation
 
