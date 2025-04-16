@@ -16,12 +16,12 @@ variable "cluster_version" {
 
 variable "vpc_id" {
   type        = string
-  default     = "vpc-0447c1683dab54521"
+  default     = "vpc-ID"
 }
 
 variable "subnet_ids" {
   type        = list
-  default     = ["subnet-01cd7e89e203f4dce","subnet-0c1648c3eec6f733e","subnet-0d8334e53ad06e06b"]
+  default     = ["subnet-ID","subnet-ID2","subnet-ID3"]
 }
 
 variable "instance_types" {
