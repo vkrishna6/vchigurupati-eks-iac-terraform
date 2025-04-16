@@ -17,15 +17,14 @@ This project uses the [terraform-aws-modules/eks](https://github.com/terraform-a
 
 ⚙️ Prerequisites
 Terraform CLI ≥ 1.3
-AWS account and credentials configured (~/.aws/credentials or env vars)
+AWS account and credentials configured (~/.aws/credentials or env vars). 
 A pre-existing VPC and Subnets (public or private)
 
-📌 Features
+📌 The following resources will be provisioned during cluster creation
 EKS Cluster provisioning
 Managed Node Group with configurable instance type and scaling
 Core EKS Add-ons: coredns, vpc-cni, kube-proxy, and eks-pod-identity-agent
 IAM access for cluster creator
-Custom VPC and Subnet support
 Tags for resource organization
 
 
