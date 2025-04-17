@@ -18,11 +18,18 @@ provider "aws" {
 resource "aws_vpc" "test-vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
   
   tags = {
     Name = "test-vpc"
     vpcname= "test-vpc"
   }
+}
+
+#output VPC ID 
+output "vpc_id" {
+  value = aws_vpc.test-vpc.id
 }
 
 # Create a public subnet with the CIDR range and availability_zones defined in variables.tf file. 
@@ -35,6 +42,9 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = "public-subnet-${count.index + 1}"
+    "kubernetes.io/role/elb"        = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+
   }
 }
 
@@ -47,8 +57,21 @@ resource "aws_subnet" "private" {
 
   tags = {
     Name = "private-subnet-${count.index + 1}"
+    "kubernetes.io/role/internal-elb"     = "1"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
+
+#output Public and Private subnet IDs
+output "public_subnets" {
+  value = aws_subnet.public[*].id
+}
+
+output "private_subnets" {
+  value = aws_subnet.private[*].id
+}
+
+
 
 # Create a IGW
 resource "aws_internet_gateway" "igw" {
@@ -116,4 +139,67 @@ resource "aws_route_table_association" "routetable2" {
   count          = length(aws_subnet.private)
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.routetable2.id
+}
+
+
+
+#---------------EKS Cluster creation section------------------------
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "20.35.0"
+}
+
+
+
+
+# Create EKS cluster using eks terraform module
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
+
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+  enable_irsa = true
+
+  bootstrap_self_managed_addons = false
+  cluster_addons = {
+    coredns                = {}
+    eks-pod-identity-agent = {}
+    kube-proxy             = {}
+    vpc-cni                = {}
+  }
+
+  # Optional
+  cluster_endpoint_public_access = true
+
+  # Optional: Adds the current caller identity as an administrator via cluster access entry
+  enable_cluster_creator_admin_permissions = true
+
+  vpc_id                   = aws_vpc.test-vpc.id
+  subnet_ids               = aws_subnet.private[*].id
+
+  # EKS Managed Node Group(s)
+  eks_managed_node_group_defaults = {
+    instance_types = var.instance_types
+  }
+
+  cluster_role_arn = aws_iam_role.eks_cluster_role.arn
+
+  eks_managed_node_groups = {
+    workernodegroup1 = {
+      # Starting on 1.30, AL2023 is the default AMI type for EKS-managed node groups
+      ami_type       = "AL2023_x86_64_STANDARD"
+      instance_types = var.instance_types
+
+      min_size     = 2
+      max_size     = 4
+      desired_size = 3
+      iam_role_arn = aws_iam_role.eks_node_group_role.arn
+    }
+  }
+
+  tags = {
+    Environment = "dev"
+    Terraform   = "true"
+  }
 }

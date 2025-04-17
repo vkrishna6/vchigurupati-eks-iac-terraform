@@ -3,3 +3,5 @@
 *.txt
 *.terraform
 *.planfile
+*planfile
+*terraform.tfstate

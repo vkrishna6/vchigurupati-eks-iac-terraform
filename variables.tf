@@ -4,12 +4,6 @@ variable "region" {
   default     = "us-east-1"
 }
 
-variable "vpc" {
-  description = "AWS VPC name"
-  type        = string
-  default     = "test-vpc1"
-}
-
 variable "azs" {
   description = "Availability Zones"
   type        = list(string)
@@ -34,21 +28,13 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  type        = number
-  default     = 1.32
-}
-
-variable "vpc_id" {
   type        = string
-  default     = "vpc-ID"
-}
-
-variable "subnet_ids" {
-  type        = list
-  default     = ["subnet-ID","subnet-ID2","subnet-ID3"]
+  default     = "1.32"
+  description = "Kubernetes version for the EKS cluster"
 }
 
 variable "instance_types" {
-  type        = list
+  type        = list(string)
   default     = ["m5.xlarge"]
+  description = "Instance types for the EKS managed node group"
 }
