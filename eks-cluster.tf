@@ -10,7 +10,7 @@ module "eks" {
   #create/enable OIDC identity provider to allow IAM roles for service accounts for Load balancer controller to access ELB
   enable_irsa = true
 
-  bootstrap_self_managed_addons = false
+  bootstrap_self_managed_addons = true
   #This block install add-ons into the cluster. It will install the latest support version. 
   cluster_addons = {
     coredns                = {}
@@ -34,8 +34,6 @@ module "eks" {
   eks_managed_node_group_defaults = {
     instance_types = var.instance_types
   }
-
-  cluster_role_arn = aws_iam_role.eks_cluster_role.arn
 
   eks_managed_node_groups = {
     workernodegroup1 = {
