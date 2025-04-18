@@ -2,6 +2,8 @@
 
 # 🚀 Terraform AWS EKS Cluster Deployment in a new VPC
 
+I created this repository as a hands-on practice project to showcase my skills in Infrastructure as Code (IaC), Terraform, and AWS EKS deployment.  
+
 This project uses the [terraform-aws-modules/eks](https://github.com/terraform-aws-modules/terraform-aws-eks) module to deploy a fully managed [Amazon EKS](https://aws.amazon.com/eks/) cluster with EKS-managed node groups.
 
 ---
