@@ -1,0 +1,7 @@
+*.terraform.lock.hcl
+*backup
+*.txt
+*.terraform
+*.planfile
+*planfile
+*terraform.tfstate
