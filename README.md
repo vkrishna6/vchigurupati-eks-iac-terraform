@@ -38,3 +38,8 @@ terraform apply planfile - Apply Terraform configuration
 terraform 
 terraform destroy - Destroy the resources
 aws eks --region us-east-1 update-kubeconfig --name test-cluster1 - Update kubeconfig file for EKS cluster access
+
+```
+---
+Author  
+Vamsikrishna Chigurupati
