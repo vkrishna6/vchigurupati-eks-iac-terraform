@@ -1,3 +1,13 @@
+variable "vpc_id" {
+  description = "ID of the VPC where EKS will be deployed"
+  type        = string
+}
+
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs for EKS worker nodes"
+  type        = list(string)
+}
+
 variable "cluster_name" {
   type        = string
 #  default     = "test-cluster1"
