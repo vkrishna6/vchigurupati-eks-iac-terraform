@@ -27,8 +27,8 @@ module "eks" {
   # Optional: Adds the current caller identity as an administrator via cluster access entry
   enable_cluster_creator_admin_permissions = true
 
-  vpc_id                   = aws_vpc.test-vpc.id
-  subnet_ids               = aws_subnet.private[*].id
+  vpc_id                   = var.vpc_id
+  subnet_ids               = var.private_subnet_ids
 
   # EKS Managed Node Group(s)
   eks_managed_node_group_defaults = {
