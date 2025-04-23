@@ -21,20 +21,3 @@ variable "private_subnet_cidrs" {
   description = "List of private subnet CIDRs"
   default = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 }
-
-variable "cluster_name" {
-  type        = string
-  default     = "test-cluster1"
-}
-
-variable "cluster_version" {
-  type        = string
-  default     = "1.32"
-  description = "Kubernetes version for the EKS cluster"
-}
-
-variable "instance_types" {
-  type        = list(string)
-  default     = ["m5.xlarge"]
-  description = "Instance types for the EKS managed node group"
-}
