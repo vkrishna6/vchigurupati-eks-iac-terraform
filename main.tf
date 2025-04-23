@@ -140,3 +140,85 @@ resource "aws_route_table_association" "routetable2" {
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.routetable2.id
 }
+
+
+# S3 bucket for remote state
+resource "aws_s3_bucket" "tf_state" {
+  bucket = "dev-cluster-1-state"
+
+  versioning {
+    enabled = true
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  tags = {
+    Name        = "Terraform State Bucket"
+    Environment = "Dev"
+  }
+}
+
+
+# DynamoDB table for state locking
+resource "aws_dynamodb_table" "tf_lock" {
+  name         = "dev-cluster-table1"
+  billing_mode = "PAY_PER_REQUEST"
+
+  hash_key = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+
+  tags = {
+    Name        = "Terraform Lock Table"
+    Environment = "Dev"
+  }
+}
+
+#create IAM policy for S3 bucket and dynamodb table
+resource "aws_iam_policy" "terraform_state_access" {
+  name        = "TerraformStateAccessPolicy"
+  description = "Access policy for S3 and DynamoDB used by Terraform"
+  policy      = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ],
+        Resource = [
+          "arn:aws:s3:::dev-cluster-1-state",
+          "arn:aws:s3:::dev-cluster-1-state/*"
+        ]
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:Scan",
+          "dynamodb:UpdateItem"
+        ],
+        Resource = "arn:aws:dynamodb:us-east-1:*:table/dev-cluster-table1"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_user_policy_attachment" "attach_policy" {
+  user       = aws_iam_user.eks-admin0414.name
+  policy_arn = aws_iam_policy.terraform_state_access.arn
+}
