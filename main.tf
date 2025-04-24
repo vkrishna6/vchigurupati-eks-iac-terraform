@@ -43,7 +43,7 @@ resource "aws_subnet" "public" {
   tags = {
     Name = "public-subnet-${count.index + 1}"
     "kubernetes.io/role/elb"        = "1"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+#    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
 
   }
 }
@@ -58,7 +58,7 @@ resource "aws_subnet" "private" {
   tags = {
     Name = "private-subnet-${count.index + 1}"
     "kubernetes.io/role/internal-elb"     = "1"
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+#    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
@@ -146,21 +146,29 @@ resource "aws_route_table_association" "routetable2" {
 resource "aws_s3_bucket" "tf_state" {
   bucket = "dev-cluster-1-state"
 
-  versioning {
-    enabled = true
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
   tags = {
     Name        = "Terraform State Bucket"
     Environment = "Dev"
+  }
+}
+
+# Enable versioning
+resource "aws_s3_bucket_versioning" "tf_state_versioning" {
+  bucket = aws_s3_bucket.tf_state.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Enable server-side encryption
+resource "aws_s3_bucket_server_side_encryption_configuration" "tf_state_sse" {
+  bucket = aws_s3_bucket.tf_state.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
@@ -223,6 +231,6 @@ data "aws_iam_user" "accountname" {
 }
 
 resource "aws_iam_user_policy_attachment" "attach_policy" {
-  user       = aws_iam_user.accountname.user_name
+  user       = data.aws_iam_user.accountname.user_name
   policy_arn = aws_iam_policy.terraform_state_access.arn
 }
