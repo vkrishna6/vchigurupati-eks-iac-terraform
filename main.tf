@@ -218,7 +218,11 @@ resource "aws_iam_policy" "terraform_state_access" {
   })
 }
 
+data "aws_iam_user" "accountname" {
+  user_name = "eks-admin0414"
+}
+
 resource "aws_iam_user_policy_attachment" "attach_policy" {
-  user       = aws_iam_user.eks-admin0414.name
+  user       = aws_iam_user.accountname.user_name
   policy_arn = aws_iam_policy.terraform_state_access.arn
 }
