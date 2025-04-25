@@ -145,7 +145,7 @@ resource "aws_route_table_association" "routetable2" {
 # S3 bucket for remote state
 resource "aws_s3_bucket" "tf_state" {
   bucket = "dev-cluster-1-state"
-
+  force_destroy = true
   tags = {
     Name        = "Terraform State Bucket"
     Environment = "Dev"
