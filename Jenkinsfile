@@ -14,8 +14,7 @@ pipeline {
     stages {
         stage('Pre-install requirements'){
             steps{
-                sh terraform --version
-                sh terragrunt --version
+                echo "testsdfadkfaldkjfalkdjfa;lkdjfalkdjflksdjfalsdkjf"
             }
         }
     }
