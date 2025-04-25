@@ -15,7 +15,7 @@ pipeline {
         stage('Pre-install requirements'){
             steps{
                 sh 'echo "testAccess"'
-                sh 'terraform --version'
+                sh '/opt/homebrew/bin/terraform --version'
             }
         }
     }
