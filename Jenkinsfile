@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Pre-install requirements'){
             steps{
-                echo "testsdfadkfaldkjfalkdjfa;lkdjfalkdjflksdjfalsdkjf"
+                echo "testAccess"
             }
         }
     }
