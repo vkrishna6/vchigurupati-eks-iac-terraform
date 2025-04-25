@@ -16,6 +16,7 @@ pipeline {
             steps{
                 sh 'echo "testAccess"'
                 sh '/opt/homebrew/bin/terraform --version'
+                sh '/opt/homebrew/bin/terragrunt --version'
             }
         }
     }
