@@ -14,8 +14,8 @@ pipeline {
     stages {
         stage('Pre-install requirements'){
             steps{
-                sh echo "testAccess"
-                sh terraform --version
+                sh 'echo "testAccess"'
+                sh 'terraform --version'
             }
         }
     }
